@@ -40,6 +40,7 @@ target_to_attr() {
   attr=${attr//../.}
   attr=${attr//../.}
   attr=${attr//../.}
+  attr=${attr#.}
   echo "$attr"
   echo "target=$1 attr=$attr" >&2
 }
@@ -64,7 +65,7 @@ while [[ $# -gt 0 ]]; do
     has_attr=1
     attr=$(target_to_attr "$1")
     build_opts+=(
-      "-A" "legacyPackages.x86_64-linux$attr"
+      "-A" "${attr}"
     )
     shift
     ;;
@@ -75,7 +76,7 @@ done
 if [[ -z $has_attr ]]; then
   attr=$(target_to_attr "")
   build_opts+=(
-    "-A" "legacyPackages.x86_64-linux$attr"
+    "-A" "${attr}"
   )
 fi
 
