@@ -45,9 +45,17 @@ target_to_attr() {
   echo "target=$1 attr=$attr" >&2
 }
 
+nix_system=$HOSTTYPE-${OSTYPE//-gnu/}
+
 build_opts=(
-  "$prj_root"
+  "<prj_root>"
+  --argstr system "$nix_system"
+  --include "prj_root=$prj_root"
   --no-out-link
+  --option allow-import-from-derivation false
+  --option allowed-uris "https://"
+  # --option pure-eval true
+  --option restrict-eval true
 )
 
 # Options parsing
@@ -80,5 +88,6 @@ if [[ -z $has_attr ]]; then
   )
 fi
 
+export NIX_PATH=
 # TODO: select the current system
 nix-build "${build_opts[@]}"
