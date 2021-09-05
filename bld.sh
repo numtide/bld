@@ -79,5 +79,5 @@ while [[ $# -gt 0 ]]; do
 done
 
 export NIX_PATH=
-# TODO: select the current system
+set -x
 nix-build "${build_opts[@]}"
