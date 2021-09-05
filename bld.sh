@@ -59,8 +59,6 @@ build_opts=(
 )
 
 # Options parsing
-has_attr=
-
 echo "prj_root=$prj_root" >&2
 
 while [[ $# -gt 0 ]]; do
@@ -70,7 +68,6 @@ while [[ $# -gt 0 ]]; do
     exit 1
     ;;
   *)
-    has_attr=1
     attr=$(target_to_attr "$1")
     build_opts+=(
       "-A" "${attr}"
@@ -80,13 +77,6 @@ while [[ $# -gt 0 ]]; do
 
   esac
 done
-
-if [[ -z $has_attr ]]; then
-  attr=$(target_to_attr "")
-  build_opts+=(
-    "-A" "${attr}"
-  )
-fi
 
 export NIX_PATH=
 # TODO: select the current system
