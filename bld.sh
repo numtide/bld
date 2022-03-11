@@ -31,7 +31,7 @@ target_to_attr() {
   # TODO: check that the path is in the project
 
   # Convert the path to an Nix attribute
-  attr=${path#$prj_root}
+  attr=${path#"$prj_root"}
   # Replace / with .
   attr=${attr//\//.}
   # Add the label
