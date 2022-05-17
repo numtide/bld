@@ -1,4 +1,4 @@
-{ writeShellScriptBin }:
+{ nixpkgs, ... }:
 {
-  bld = writeShellScriptBin "bld" (builtins.readFile ./bld.sh);
+  bld = nixpkgs.writeShellScriptBin "bld" (builtins.readFile ./bld.sh);
 }
