@@ -61,6 +61,10 @@ build_opts=(
 # Options parsing
 echo "prj_root=$prj_root" >&2
 
+if [[ $# = 0 ]]; then
+  set -- .
+fi
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
   -*)
