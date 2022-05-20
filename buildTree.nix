@@ -68,7 +68,7 @@ let
   getExe = x: "${getBin x}/bin/${x.meta.mainProgram or (getName x)}";
 in
 root.self // {
-  _flatten = import ./flattenTree.nix root.self;
+  _flatten = {}: import ./flattenTree.nix root.self;
 
   _run = key:
     let
