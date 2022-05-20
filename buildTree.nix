@@ -1,5 +1,6 @@
 { path
 , args
+, lib # nixpkgs-lib
 }:
 let
   # Like callPackage but:
@@ -48,7 +49,38 @@ let
       attrs = { recurseForDerivations = true; } // subdirAttrs // buildAttrs;
     in
     attrs;
+
+  getAttrByKey = name: lib.getAttrFromPath (lib.splitString "." name);
+
+  getName = x:
+    let
+      parse = drv: (builtins.parseDrvName drv).name;
+    in
+    if builtins.isString x
+    then parse x
+    else x.pname or (parse x.name);
+
+  getBin = pkg:
+    if ! pkg ? outputSpecified || ! pkg.outputSpecified
+    then pkg.bin or pkg.out or pkg
+    else pkg;
+
+  getExe = x: "${getBin x}/bin/${x.meta.mainProgram or (getName x)}";
 in
 root.self // {
-  _flatten = import ./readTree.nix root.self;
+  _flatten = import ./flattenTree.nix root.self;
+
+  _run = key:
+    let
+      val = getAttrByKey key root.self;
+    in
+    if lib.isDerivation val then getExe val
+    else if !lib.isAttrs val then
+      abort "${key} is not a derivation or attrs"
+    else if ! val ? default then
+      abort "${key} has not default package"
+    else if !lib.isDerivation val.default then
+      abort "${key}.default is not a derivation"
+    else
+      getExe val.default;
 }

@@ -1,4 +1,4 @@
 { nixpkgs, ... }:
 {
-  bld = nixpkgs.writeShellScriptBin "bld" (builtins.readFile ./bld.sh);
+  default = nixpkgs.writeShellScriptBin "bld" (builtins.readFile ./bld.sh);
 }

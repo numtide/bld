@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 #
-# Usage: bld [<target>...]
+# Usage: bld [--run|--help] [<target>...]
 set -euo pipefail
 
 prj_root=${PRJ_ROOT:-$(git rev-parse --show-toplevel)}
+
+log() {
+  echo "bld: $*" >&2
+}
 
 target_to_attr() {
   local path label attr
@@ -42,46 +46,103 @@ target_to_attr() {
   attr=${attr//../.}
   attr=${attr#.}
   echo "$attr"
-  echo "target=$1 attr=$attr" >&2
+}
+
+cmd_build() {
+  local args=(
+    "<prj_root>"
+    --no-out-link
+    "${nix_opts[@]}"
+  )
+  for attr in "$@"; do
+    args+=("-A" "${attr}")
+  done
+  nix-build "${args[@]}"
 }
 
 nix_system=$HOSTTYPE-${OSTYPE//-gnu/}
-
-build_opts=(
-  "<prj_root>"
+# don't use NIX_PATH
+export NIX_PATH=
+nix_opts=(
   --argstr system "$nix_system"
   --include "prj_root=$prj_root"
-  --no-out-link
   --option allow-import-from-derivation false
   --option allowed-uris "https://"
   # --option pure-eval true
   --option restrict-eval true
 )
+attrs=()
+cmd=build
 
 # Options parsing
-echo "prj_root=$prj_root" >&2
-
-if [[ $# == 0 ]]; then
-  set -- .
-fi
-
 while [[ $# -gt 0 ]]; do
   case "$1" in
+  --help)
+    head -n 4 "${BASH_SOURCE[0]}" | tail -n 1
+    exit
+    ;;
+  --run)
+    cmd=run
+    shift
+    ;;
+  --list)
+    cmd=list
+    shift
+    ;;
+  --)
+    break
+    ;;
   -*)
     echo "ERROR: Unknown option $1"
     exit 1
     ;;
-  *)
-    attr=$(target_to_attr "$1")
-    build_opts+=(
-      "-A" "${attr}"
-    )
+  :)
+    cmd=list
+    ;;
+  :*)
+    cmd=run
+    attr=$(target_to_attr "${1#:}")
+    attrs+=("${attr}")
     shift
     ;;
-
+  *)
+    attr=$(target_to_attr "$1")
+    attrs+=("${attr}")
+    shift
+    ;;
   esac
 done
 
-export NIX_PATH=
-set -x
-nix-build "${build_opts[@]}"
+# TODO: fix unbound on empty array
+if [[ ${#attrs[@]} == 0 ]]; then
+  attrs=("$(target_to_attr .)")
+fi
+
+log "prj_root=$prj_root cmd=$cmd attrs=${attrs[*]}"
+
+case "$cmd" in
+build)
+  cmd_build "${attrs[@]}"
+  ;;
+list)
+  log "TODO: good idea, implement me?"
+  exit 1
+  ;;
+run)
+  if [[ ${#attrs[@]} != 1 ]]; then
+    log "too many attrs: ${#attrs}"
+    exit 1
+  fi
+  cmd_build "${attrs[@]}"
+  args=(
+    "${nix_opts[@]}" --eval --expr "{ path }: (import <prj_root> {})._run path" --argstr path "${attrs[0]}"
+  )
+  log "running: ${args[*]@Q}"
+  exe_path=$(nix-instantiate "${args[@]}" | xargs)
+  exec "$exe_path" "$@"
+  ;;
+*)
+  log "command $cmd not supported"
+  exit 1
+  ;;
+esac
