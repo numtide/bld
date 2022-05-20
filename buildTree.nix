@@ -49,4 +49,6 @@ let
     in
     attrs;
 in
-root.self
+root.self // {
+  _flatten = import ./readTree.nix root.self;
+}
