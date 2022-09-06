@@ -55,6 +55,7 @@ cmd_build() {
     --extra-experimental-features nix-command
     -L --out-link "${cache_dir}/result-$1"
     --builders ''
+    --print-out-paths
     "${nix_opts[@]}"
   )
   for attr in "$@"; do
