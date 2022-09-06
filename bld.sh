@@ -4,6 +4,7 @@
 set -euo pipefail
 
 prj_root=${PRJ_ROOT:-$(git rev-parse --show-toplevel)}
+cache_dir=$prj_root/.cache/bld
 
 log() {
   echo "bld: $*" >&2
@@ -50,14 +51,16 @@ target_to_attr() {
 
 cmd_build() {
   local args=(
-    "<prj_root>"
-    --no-out-link
+    "-f" "<prj_root>"
+    --extra-experimental-features nix-command
+    -L --out-link "${cache_dir}/result-$1"
+    --builders ''
     "${nix_opts[@]}"
   )
   for attr in "$@"; do
-    args+=("-A" "${attr}")
+    args+=("${attr}")
   done
-  nix-build "${args[@]}"
+  nix build "${args[@]}"
 }
 
 nix_system=$HOSTTYPE-${OSTYPE//-gnu/}
