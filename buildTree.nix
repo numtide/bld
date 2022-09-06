@@ -34,6 +34,7 @@ let
       dir = builtins.readDir path;
       dirFilter = name: type:
         type == "directory" &&
+        ! (builtins.hasAttr ".skip-subtree" dir) &&
         builtins.substring 0 1 name != "." # ignore folders starting with dot
       ;
       subDirs = filterAttrs dirFilter dir;
