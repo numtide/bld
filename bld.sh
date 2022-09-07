@@ -129,8 +129,10 @@ build)
   cmd_build "${attrs[@]}"
   ;;
 list)
-  log "TODO: good idea, implement me?"
-  exit 1
+  args=(
+    "${nix_opts[@]}" --eval --expr "{ path }: (import <prj_root> {})._list path" --argstr path "$PWD"
+  )
+  echo -e "\n$(nix-instantiate "${args[@]}" | xargs)"
   ;;
 run)
   if [[ ${#attrs[@]} != 1 ]]; then

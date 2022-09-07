@@ -29,7 +29,7 @@ let
   # Generates a tree of attributes
   readBuildTree = path:
     # Used to check that the tree evaluation is lazy
-    assert builtins.trace "DEBUG: reading path ${toString path}" true;
+    #assert builtins.trace "DEBUG: reading path ${toString path}" true;
     let
       dir = builtins.readDir path;
       dirFilter = name: type:
@@ -67,9 +67,13 @@ let
     else pkg;
 
   getExe = x: "${getBin x}/bin/${x.meta.mainProgram or (getName x)}";
+
+  flattenTree = import ./flattenTree.nix;
 in
 root.self // {
-  _flatten = {}: import ./flattenTree.nix root.self;
+  _flatten = {}: flattenTree root.self;
+
+  _list = path: lib.concatStringsSep "\n" (lib.attrNames (flattenTree (readBuildTree path)));
 
   _run = key:
     let
