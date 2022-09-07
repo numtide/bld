@@ -78,11 +78,15 @@ nix_opts=(
 attrs=()
 cmd=build
 
+show_help &>/dev/null || show_help() {
+  head -n 3 "${BASH_SOURCE[0]}" | tail -n 1
+}
+
 # Options parsing
 while [[ $# -gt 0 ]]; do
   case "$1" in
   --help)
-    head -n 4 "${BASH_SOURCE[0]}" | tail -n 1
+    show_help
     exit
     ;;
   --run)
