@@ -5,6 +5,6 @@ let
 in
 writeShellApplication {
   name = "bld";
-  runtimeInputs = [ nix ];
+  runtimeInputs = [ nix fzf ];
   text = bldScript;
 }

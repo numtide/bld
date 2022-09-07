@@ -93,6 +93,10 @@ while [[ $# -gt 0 ]]; do
     cmd=list
     shift
     ;;
+  --interactive)
+    cmd=interactive
+    shift
+    ;;
   --)
     break
     ;;
@@ -128,11 +132,17 @@ case "$cmd" in
 build)
   cmd_build "${attrs[@]}"
   ;;
-list)
+list | interactive)
   args=(
     "${nix_opts[@]}" --eval --expr "{ path }: (import <prj_root> {})._list path" --argstr path "$PWD"
   )
-  echo -e "\n$(nix-instantiate "${args[@]}" | xargs)"
+  targets="$(nix-instantiate "${args[@]}" | xargs)"
+  if [[ $cmd == "list" ]]; then
+	  echo -e "$targets"
+  else
+	  target="$(echo -e "$targets" | fzf)"
+	  bld "$target"
+  fi
   ;;
 run)
   if [[ ${#attrs[@]} != 1 ]]; then
