@@ -20,15 +20,18 @@
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
     in
     {
-      devShells = forAllSystems
-        (system: {
-          default = self.packages.${system}.devShell;
-        });
       packages = forAllSystems (system:
         import self {
           nixpkgs = nixpkgs.legacyPackages.${system};
           inherit system;
         });
+
+      devShells = forAllSystems (system: {
+        default = self.packages.${system}.devShell;
+      });
+
+      lib = import ./lib;
+
       hydraJobs = self.packages.x86_64-linux;
     };
 }

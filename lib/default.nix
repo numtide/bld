@@ -1,0 +1,3 @@
+{
+  buildTree = import ./buildTree.nix;
+}
