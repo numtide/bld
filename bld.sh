@@ -134,9 +134,9 @@ build)
   ;;
 list | interactive)
   args=(
-    "${nix_opts[@]}" --eval --expr "{ path }: (import <prj_root> {})._list path" --argstr path "$PWD"
+    "${nix_opts[@]}" --impure --expr "(import <prj_root> {})._list \"$PWD\""
   )
-  targets="$(nix-instantiate "${args[@]}" | xargs)"
+  targets="$(nix eval "${args[@]}" | xargs)"
   if [[ $cmd == "list" ]]; then
 	  echo -e "$targets"
   else
@@ -151,7 +151,7 @@ run)
   fi
   cmd_build "${attrs[@]}"
   args=(
-    "${nix_opts[@]}" --eval --expr "{ path }: (import <prj_root> {})._run path" --argstr path "${attrs[0]}"
+    "${nix_opts[@]}" --eval --expr " (import <prj_root> {})._run \"${attrs[0]}\""
   )
   log "running: ${args[*]@Q}"
   exe_path=$(nix-instantiate "${args[@]}" | xargs)
