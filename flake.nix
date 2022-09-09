@@ -3,28 +3,32 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    devshell.url = "github:numtide/devshell";
   };
 
   nixConfig.extra-substituters = [ "https://numtide.cachix.org/" ];
   nixConfig.extra-trusted-public-keys = [ "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE=" ];
 
-  outputs = { self, nixpkgs }:
+  outputs = { self, nixpkgs, devshell }:
     let
-      eachSystem = nixpkgs.lib.genAttrs [
+      supportedSystems = [
         "aarch64-darwin"
         "aarch64-linux"
         "x86_64-darwin"
         "x86_64-linux"
       ];
+      forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
     in
     {
-      packages = eachSystem (system: {
-        default = import ./. {
+      devShells = forAllSystems
+        (system: {
+          default = self.packages.${system}.devShell;
+        });
+      packages = forAllSystems (system:
+        import self {
           nixpkgs = nixpkgs.legacyPackages.${system};
-        };
-      });
-
-      # For buildbot
-      flake.hydraJobs = self.packages.x86_64-linux;
+          inherit system;
+        });
+      hydraJobs = self.packages.x86_64-linux;
     };
 }
