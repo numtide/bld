@@ -7,7 +7,7 @@ let
     inherit (builtins)
       attrNames
       concatMap
-      concatStringSep
+      concatStringsSep
       hasAttr
       head
       isAttrs
