@@ -97,6 +97,10 @@ while [[ $# -gt 0 ]]; do
     cmd=interactive
     shift
     ;;
+  --show-trace)
+    nix_opts+=(--show-trace)
+    shift
+    ;;
   --)
     break
     ;;
