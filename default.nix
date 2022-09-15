@@ -6,8 +6,6 @@
     config = { };
     overlays = [ ];
   }
-, restrict_eval ? true
-, allow-import-from-derivation ? false
 }:
 let
   bld = import ./lib;
@@ -16,10 +14,8 @@ bld.buildTree {
   path = ./.;
   args = {
     inherit
-      allow-import-from-derivation
       inputs
       nixpkgs
-      restrict_eval
       ;
   };
 }
