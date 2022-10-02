@@ -16,10 +16,35 @@ let
       mapAttrs
       parseDrvName
       readDir
-      splitString
       substring
       tail
       ;
+
+
+    splitString =
+      let
+        addContextFrom = a: b: builtins.substring 0 0 a + b;
+        escape = list: builtins.replaceStrings list (map (c: "\\${c}") list);
+        range =
+          # First integer in the range
+          first:
+          # Last integer in the range
+          last:
+          if first > last then
+            [ ]
+          else
+            builtins.genList (n: first + n) (last - first + 1);
+        stringToCharacters = s:
+          map (p: builtins.substring p 1 s) (range 0 (builtins.stringLength s - 1));
+        escapeRegex = escape (stringToCharacters "\\[{()^$?*+|.");
+      in
+      _sep: _s:
+        let
+          sep = builtins.unsafeDiscardStringContext _sep;
+          s = builtins.unsafeDiscardStringContext _s;
+          splits = builtins.filter builtins.isString (builtins.split (escapeRegex sep) s);
+        in
+        map (v: addContextFrom _sep (addContextFrom _s v)) splits;
 
     getName = x:
       let
@@ -121,3 +146,5 @@ root.self // {
     else
       lib.getExe val.default;
 }
+
+

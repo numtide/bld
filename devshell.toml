@@ -1,0 +1,23 @@
+imports = [
+  "language.go"
+]
+
+[devshell]
+name = "bld"
+packages = [
+  "gofumpt",
+  "nixpkgs-fmt",
+  "treefmt",
+  "golangci-lint",
+  "gcc"
+]
+
+[[commands]]
+name = "fmt"
+help = "format code"
+command = "treefmt"
+
+[[commands]]
+name = "lint"
+help = "lint code"
+command = "cd $PRJ_ROOT/cmd && golangci-lint run"

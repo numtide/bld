@@ -5,12 +5,17 @@
 }:
 with nixpkgs;
 let
-  bldScript = builtins.readFile ./bld.sh;
-  bin = writeShellApplication {
-    name = "bld";
-    runtimeInputs = [ nix fzf ];
-    text = bldScript;
-  };
+  bin = buildGo118Module
+    {
+      name = "bld";
+      src = nixpkgs.lib.cleanSource ./cmd;
+      doCheck = true;
+      checkPhase = ''
+        HOME=$TMPDIR
+        ${nixpkgs.golangci-lint}/bin/golangci-lint run
+      '';
+      vendorSha256 = "sha256-jmBacHgDzFUqO/ZsaMazcN6r37Yy2VXQdQ4p4CUkTUc";
+    };
   lib = import ./lib;
   devshell = import inputs.devshell { inherit system; inherit nixpkgs; };
 in
