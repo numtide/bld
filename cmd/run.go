@@ -25,7 +25,7 @@ func (r *Run) Run(_ *kong.Context) error {
 		return err
 	}
 
-	err = nix.Build(rootDirectory, r.Target, r.ShowTrace)
+	err = nix.Build(rootDirectory, r.Target, r.ShowTrace, false)
 	if err != nil {
 		return err
 	}

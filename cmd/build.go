@@ -7,8 +7,9 @@ import (
 )
 
 type Build struct {
-	Target    string `arg:"" name:"target" help:"Target to build" type:"target"`
-	ShowTrace bool   `name:"show-trace" help:"Show trace on error"`
+	Target     string `arg:"" name:"target" help:"Target to build" type:"target"`
+	ShowTrace  bool   `name:"show-trace" help:"Show trace on error"`
+	JSONOutput bool   `name:"json" help:"Return json formatted output"`
 }
 
 func (b *Build) Run(_ *kong.Context) error {
@@ -21,7 +22,7 @@ func (b *Build) Run(_ *kong.Context) error {
 		return err
 	}
 
-	err = nix.Build(rootDirectory, b.Target, b.ShowTrace)
+	err = nix.Build(rootDirectory, b.Target, b.ShowTrace, b.JSONOutput)
 	if err != nil {
 		return err
 	}
