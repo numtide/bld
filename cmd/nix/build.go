@@ -1,7 +1,6 @@
 package nix
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"os"
@@ -11,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func Build(rootDirectory, target string, showTrace bool) (err error) {
+func Build(rootDirectory, target string, showTrace bool, jsonOutput bool) (err error) {
 	if err != nil {
 		errorMessage := fmt.Sprintf(
 			"Error looking for root directory %s", err.Error(),
@@ -39,13 +38,17 @@ func Build(rootDirectory, target string, showTrace bool) (err error) {
 
 	cacheDirectory := fmt.Sprintf("%s/.cache/bld", rootDirectory)
 
+	output := "--print-out-paths"
+	if jsonOutput {
+		output = "--json"
+	}
+
 	args := []string{
 		"build",
 		"--include", fmt.Sprintf("prj_root=%s", rootDirectory),
-		"--json",
+		output,
 		"-L", "--out-link", fmt.Sprintf("%s/result-%s", cacheDirectory, attr),
 		"--builders", "''",
-		"--print-out-paths",
 		"-f", "<prj_root>",
 		pathToBuild,
 	}
@@ -58,8 +61,7 @@ func Build(rootDirectory, target string, showTrace bool) (err error) {
 
 	cmd := exec.Command("nix", args...)
 
-	var stdout bytes.Buffer
-	cmd.Stdout = &stdout
+	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
 	err = cmd.Run()
