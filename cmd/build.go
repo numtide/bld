@@ -7,7 +7,7 @@ import (
 )
 
 type Build struct {
-	Target     string `arg:"" name:"target" help:"Target to build" type:"target"`
+	Target     string `arg:"" name:"target" help:"Target to build" type:"target" default:"."`
 	ShowTrace  bool   `name:"show-trace" help:"Show trace on error"`
 	JSONOutput bool   `name:"json" help:"Return json formatted output"`
 }
