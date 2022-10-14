@@ -1,10 +1,10 @@
 { values, ... }:
 {
   isEqual = a: b:
-    if a != b then throw "expected ${a} == ${b}" else true;
+    if a != b then throw "expected ${toString a} == ${toString b}" else true;
 
   isTrue = cond:
-    if !cond then throw "expected true, got ${cond}" else true;
+    if !cond then throw "expected true, got ${toString cond}" else true;
 
   isType = type: val:
     let
