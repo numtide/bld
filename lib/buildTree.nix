@@ -18,8 +18,18 @@ let
       readDir
       substring
       tail
+      filter
       ;
 
+    findFirst =
+      # Predicate
+      pred:
+      # Default value to return
+      default:
+      # Input list
+      list:
+      let found = lib.filter pred list;
+      in if found == [ ] then default else lib.head found;
 
     splitString =
       let
@@ -59,7 +69,15 @@ let
       then pkg.bin or pkg.out or pkg
       else pkg;
 
-    getExe = x: "${lib.getBin x}/bin/${x.meta.mainProgram or (lib.getName x)}";
+    getExe =
+      let
+        isDir = p: builtins.pathExists (toString p + "/.");
+      in
+      x:
+      lib.findFirst (p: builtins.pathExists p && !isDir p) "" [
+        "${lib.getBin x}/bin/${x.meta.mainProgram or (lib.getName x)}"
+        (lib.getBin x)
+      ];
 
     isDerivation = x: x.type or null == "derivation";
 
