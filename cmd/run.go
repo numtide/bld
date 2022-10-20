@@ -17,6 +17,17 @@ type Run struct {
 	ShowTrace bool   `name:"show-trace" help:"Show trace on error"`
 }
 
+func isExecutable(filename string) (bool, error) {
+	fileInfo, err := os.Stat(filename)
+	if err != nil {
+		return false, err
+	}
+
+	mode := fileInfo.Mode()
+
+	return mode&0o111 != 0, nil
+}
+
 func (r *Run) Run(_ *kong.Context) error {
 	log.Debug("Running target in directory")
 
@@ -33,6 +44,25 @@ func (r *Run) Run(_ *kong.Context) error {
 	result, err := nix.Instantiate(rootDirectory, r.Target, "_run")
 	if err != nil {
 		return err
+	}
+
+	if result == "" {
+		errorMessage := fmt.Sprintf(
+			"Unable to find executable for target `%s`", r.Target)
+
+		return errors.New(errorMessage)
+	}
+
+	isExec, err := isExecutable(result)
+	if err != nil {
+		return err
+	}
+
+	if !isExec {
+		errorMessage := fmt.Sprintf(
+			"Found file in target %s but %s is not executable", r.Target, result)
+
+		return errors.New(errorMessage)
 	}
 
 	log.WithFields(log.Fields{"command": result}).Debug("Running target")
