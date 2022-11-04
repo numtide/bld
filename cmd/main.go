@@ -13,10 +13,11 @@ import (
 
 //nolint:gochecknoglobals
 var cli struct {
-	Debug bool
-	Build Build `kong:"cmd,name='build',help='Build target',default='withargs'"`
-	List  List  `kong:"cmd,name='list',help='List available targets'"`
-	Run   Run   `kong:"cmd,name='run',help='Run executable target'"`
+	Debug   bool
+	Build   Build   `kong:"cmd,name='build',help='Build target',default='withargs'"`
+	List    List    `kong:"cmd,name='list',help='List available targets'"`
+	Run     Run     `kong:"cmd,name='run',help='Run executable target'"`
+	Inspect Inspect `kong:"cmd,name='inspect',help='Show build information about target'"`
 }
 
 func getPrjRoot() (string, error) {
