@@ -38,26 +38,30 @@ func Inspect(rootDirectory, target string) (err error) {
 
 	log.WithFields(log.Fields{"pathToBuild": pathToBuild}).Debug("Running nix show-derivation")
 
-	var command string
-
-	if pathToBuild != "" {
-		command = fmt.Sprintf("nix show-derivation --extra-experimental-features nix-command $(nix-instantiate --no-gc-warning --json -A %s )", pathToBuild)
-	} else {
-		command = "nix show-derivation --extra-experimental-features nix-command $(nix-instantiate --no-gc-warning --json )"
+	// Eval
+	var drvPath string
+	{
+		args := []string{"--no-gc-warning", "--json"}
+		if pathToBuild != "" {
+			args = append(args, "-A", pathToBuild)
+		}
+		cmd := exec.Command("nix-instantiate", args...)
+		cmd.Stderr = os.Stderr
+		bs, err := cmd.Output()
+		if err != nil {
+			return fmt.Errorf("error while inspecting the target: %w", err)
+		}
+		drvPath = strings.TrimSpace(string(bs))
 	}
 
-	cmd := exec.Command("bash", "-c", command)
-
+	// Show derivation
+	cmd := exec.Command("nix", "show-derivation", "--extra-experimental-features", "nix-command", drvPath)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
 	err = cmd.Run()
 	if err != nil {
-		errorMessage := fmt.Sprintf(
-			"Error while inspect target: %s", err.Error(),
-		)
-
-		return errors.New(errorMessage)
+		return fmt.Errorf("error while inspect target: %w", err)
 	}
 
 	return nil
