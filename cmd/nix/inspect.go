@@ -41,9 +41,9 @@ func Inspect(rootDirectory, target string) (err error) {
 	var command string
 
 	if pathToBuild != "" {
-		command = fmt.Sprintf("nix show-derivation $(nix-instantiate --no-gc-warning --json -A %s )", pathToBuild)
+		command = fmt.Sprintf("nix show-derivation --extra-experimental-features nix-command $(nix-instantiate --no-gc-warning --json -A %s )", pathToBuild)
 	} else {
-		command = "nix show-derivation $(nix-instantiate --no-gc-warning --json )"
+		command = "nix show-derivation --extra-experimental-features nix-command $(nix-instantiate --no-gc-warning --json )"
 	}
 
 	cmd := exec.Command("bash", "-c", command)

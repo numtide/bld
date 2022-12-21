@@ -44,6 +44,7 @@ func Build(rootDirectory, target string, showTrace bool, jsonOutput bool) (err e
 	}
 
 	args := []string{
+		"--extra-experimental-features", "nix-command",
 		"build",
 		"--include", fmt.Sprintf("prj_root=%s", rootDirectory),
 		output,
