@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"os"
@@ -39,8 +38,7 @@ func (r *Run) Run(_ *kong.Context) error {
 
 	cmd := exec.Command(result)
 
-	var stdout bytes.Buffer
-	cmd.Stdout = &stdout
+	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
 	err = cmd.Run()
