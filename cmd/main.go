@@ -37,15 +37,20 @@ func getPrjRoot() (string, error) {
 	return strings.TrimSpace(string(cmdOut)), nil
 }
 
+func die(err error) {
+	fmt.Fprintln(os.Stderr, err)
+	os.Exit(1)
+}
+
 func main() {
 	parser, err := kong.New(&cli)
 	if err != nil {
-		panic(err)
+		die(err)
 	}
 
 	ctx, err := parser.Parse(os.Args[1:])
 	if err != nil {
-		panic(err)
+		die(err)
 	}
 
 	if cli.Debug {
