@@ -75,6 +75,25 @@ INFO[0000] Building target                               target=hello
 /nix/store/9a74wmrh6l9h012xza53ff58v0rx456d-hello
 Hello, world!
 ```
+
+This can be also used to pass flags:
+
+`$ bld run hello -- --help`
+```
+/nix/store/9a74wmrh6l9h012xza53ff58v0rx456d-hello
+Print a friendly, customizable greeting.
+
+  -t, --traditional       use traditional greeting
+  -g, --greeting=TEXT     use TEXT as the greeting message
+
+      --help     display this help and exit
+      --version  output version information and exit
+
+Report bugs to: bug-hello@gnu.org
+GNU Hello home page: <https://www.gnu.org/software/hello/>
+General help using GNU software: <https://www.gnu.org/gethelp/>
+```
+
 </details>
 
 <details>
