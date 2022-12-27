@@ -25,4 +25,9 @@ in
   devShell = devshell.mkShell {
     imports = [ (devshell.importTOML ./devshell.toml) ];
   };
+
+  # Example for a run target. You can execute this with `bld run hello`
+  hello = nixpkgs.writeShellScriptBin "hello" ''
+    ${nixpkgs.lib.getExe nixpkgs.hello} "$@"
+  '';
 }

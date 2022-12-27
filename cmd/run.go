@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"os"
@@ -13,8 +12,9 @@ import (
 )
 
 type Run struct {
-	Target    string `arg:"" name:"target" help:"Target to run" type:"target" default:"."`
-	ShowTrace bool   `name:"show-trace" help:"Show trace on error"`
+	Target    string   `arg:"" name:"target" help:"Target to run" type:"target" default:"."`
+	Args      []string `arg:"" help:"Arguments to pass to run target." default:"[]"`
+	ShowTrace bool     `name:"show-trace" help:"Show trace on error"`
 }
 
 func (r *Run) Run(_ *kong.Context) error {
@@ -37,10 +37,8 @@ func (r *Run) Run(_ *kong.Context) error {
 
 	log.WithFields(log.Fields{"command": result}).Debug("Running target")
 
-	cmd := exec.Command(result)
-
-	var stdout bytes.Buffer
-	cmd.Stdout = &stdout
+	cmd := exec.Command(result, r.Args...)
+	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
 	err = cmd.Run()
