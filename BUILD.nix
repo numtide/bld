@@ -22,6 +22,8 @@ in
 {
   inherit bld lib;
   default = bld;
+  # legacy attribute...
+  bin = bld;
   devShell = devshell.mkShell {
     imports = [ (devshell.importTOML ./devshell.toml) ];
   };
