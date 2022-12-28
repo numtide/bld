@@ -5,7 +5,7 @@
 }:
 with nixpkgs;
 let
-  bin = buildGo118Module
+  bld = buildGo118Module
     {
       name = "bld";
       src = nixpkgs.lib.cleanSource ./cmd;
@@ -20,8 +20,8 @@ let
   devshell = import inputs.devshell { inherit system; inherit nixpkgs; };
 in
 {
-  inherit bin lib;
-  default = bin;
+  inherit bld lib;
+  default = bld;
   devShell = devshell.mkShell {
     imports = [ (devshell.importTOML ./devshell.toml) ];
   };

@@ -20,14 +20,18 @@
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
     in
     {
-      packages = forAllSystems (system:
+      legacyPackages = forAllSystems (system:
         import self {
           nixpkgs = nixpkgs.legacyPackages.${system};
           inherit system;
         });
 
+      packages = forAllSystems (system: {
+        inherit (self.legacyPackages.${system}) default bld;
+      });
+
       devShells = forAllSystems (system: {
-        default = self.packages.${system}.devShell;
+        default = self.legacyPackages.${system}.devShell;
       });
 
       lib = import ./lib;
