@@ -11,7 +11,7 @@ rec {
   concat = concatSep "";
 
   # string -> [string] -> string
-  concatSep = builtins.concatStringsSep;
+  join = builtins.concatStringsSep;
 
   #
   length = builtins.stringLength;
