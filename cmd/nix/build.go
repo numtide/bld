@@ -49,7 +49,6 @@ func Build(rootDirectory, target string, showTrace bool, jsonOutput bool) (err e
 		"--include", fmt.Sprintf("prj_root=%s", rootDirectory),
 		output,
 		"-L", "--out-link", fmt.Sprintf("%s/result-%s", cacheDirectory, attr),
-		"--builders", "''",
 		"-f", "<prj_root>",
 		pathToBuild,
 	}
