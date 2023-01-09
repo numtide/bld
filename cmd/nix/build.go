@@ -10,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func Build(rootDirectory, target string, showTrace bool, jsonOutput bool) (err error) {
+func Build(rootDirectory, target string, showTrace bool, jsonOutput bool, cacheDirectory string) (err error) {
 	if err != nil {
 		errorMessage := fmt.Sprintf(
 			"Error looking for root directory %s", err.Error(),
@@ -35,8 +35,6 @@ func Build(rootDirectory, target string, showTrace bool, jsonOutput bool) (err e
 
 	pathToBuild := strings.Trim(fmt.Sprintf("%s/%s", path, attr), "/")
 	pathToBuild = strings.Replace(pathToBuild, "/", ".", -1)
-
-	cacheDirectory := fmt.Sprintf("%s/.cache/bld", rootDirectory)
 
 	output := "--print-out-paths"
 	if jsonOutput {

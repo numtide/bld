@@ -12,9 +12,10 @@ import (
 )
 
 type Run struct {
-	Target    string   `arg:"" name:"target" help:"Target to run" type:"target" default:"."`
-	Args      []string `arg:"" help:"Arguments to pass to run target." default:"[]"`
-	ShowTrace bool     `name:"show-trace" help:"Show trace on error"`
+	Target         string   `arg:"" name:"target" help:"Target to run" type:"target" default:"."`
+	Args           []string `arg:"" help:"Arguments to pass to run target." default:"[]"`
+	ShowTrace      bool     `name:"show-trace" help:"Show trace on error"`
+	CacheDirectory string   `name:"cache-dir" help:"Cache directory" env:"BLD_CACHE_DIR"`
 }
 
 func (r *Run) Run(_ *kong.Context) error {
@@ -25,7 +26,12 @@ func (r *Run) Run(_ *kong.Context) error {
 		return err
 	}
 
-	err = nix.Build(rootDirectory, r.Target, r.ShowTrace, false)
+	cacheDirectory := fmt.Sprintf("%s/.cache/bld", rootDirectory)
+	if r.CacheDirectory != "" {
+		cacheDirectory = r.CacheDirectory
+	}
+
+	err = nix.Build(rootDirectory, r.Target, r.ShowTrace, false, cacheDirectory)
 	if err != nil {
 		return err
 	}
