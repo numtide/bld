@@ -5,7 +5,7 @@
 }:
 with nixpkgs;
 let
-  bld = buildGo118Module
+  bld = buildGoModule
     {
       name = "bld";
       src = nixpkgs.lib.cleanSource ./cmd;
