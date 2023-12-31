@@ -36,6 +36,8 @@
 
       lib = import ./lib;
 
+      checks = self.packages;
+
       hydraJobs = self.legacyPackages.x86_64-linux._flatten {};
     };
 }
