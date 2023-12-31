@@ -14,7 +14,7 @@ let
         HOME=$TMPDIR
         ${nixpkgs.golangci-lint}/bin/golangci-lint run
       '';
-      vendorSha256 = "sha256-jmBacHgDzFUqO/ZsaMazcN6r37Yy2VXQdQ4p4CUkTUc";
+      vendorHash = "sha256-jmBacHgDzFUqO/ZsaMazcN6r37Yy2VXQdQ4p4CUkTUc";
     };
   lib = import ./lib;
   devshell = import inputs.devshell { inherit system; inherit nixpkgs; };
