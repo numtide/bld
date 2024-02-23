@@ -45,12 +45,15 @@ func Inspect(rootDirectory, target string) (err error) {
 		if pathToBuild != "" {
 			args = append(args, "-A", pathToBuild)
 		}
+
 		cmd := exec.Command("nix-instantiate", args...)
 		cmd.Stderr = os.Stderr
+
 		bs, err := cmd.Output()
 		if err != nil {
 			return fmt.Errorf("error while inspecting the target: %w", err)
 		}
+
 		drvPath = strings.TrimSpace(string(bs))
 	}
 
