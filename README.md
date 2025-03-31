@@ -1,5 +1,7 @@
 # bld
 
+**The experiment is over for now. For most use-cases, something like [blueprint](https://github.com/numtide/blueprint) is good enough.**
+
 bld is an experimental build tool for monorepos inspired by Bazel, and 
 implemented with Nix. This is meant to evolve and its current form is not the
 final one.
